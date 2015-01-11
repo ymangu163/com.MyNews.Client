@@ -3,6 +3,7 @@ package com.ymangu.mynews;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.ymangu.mynews.fragment.MenuFragment;
 
 import android.os.Bundle;
 import android.view.Window;
@@ -54,6 +55,18 @@ public class MainActivity extends SlidingFragmentActivity {
 		// 第二个参数 SlidingMenu.TOUCHMODE_MARGIN 只能在边沿滑动
 		// 第三个参数 SlidingMenu.TOUCHMODE_NONE 不能滑动
 		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		
+		// 创建MenuFragment
+		MenuFragment menuFragment = new MenuFragment();
+		//获取fragment的管理者
+				getSupportFragmentManager()
+				//开启事物
+				.beginTransaction()
+				//把帧布局给替换了
+				.replace(R.id.menu_frame, menuFragment, "Menu")
+				//提交
+				.commit();
+		
 		
 	}
 }
