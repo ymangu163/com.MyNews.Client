@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.ymangu.mynews.R;
 import com.ymangu.mynews.base.BaseFragment;
@@ -21,12 +22,41 @@ import com.ymangu.mynews.home.SettingPage;
 import com.ymangu.mynews.home.SmartServicePage;
 import com.ymangu.mynews.view.LazyViewPager;
 
+/*
+ * . 架构： Fragment + ViewPager
+ *  HomeFragment 是 Fragment， Fragment 中嵌套一个 ViewPager。 
+ */
+
+/*
+ * .Android 内存优化
+布局中的内容太多了，运行是崩溃了
+
+分析。。。由于new出来的对象太多了。每new一个 之后会在堆中产生一块空间。。所以崩溃了。。。
+
+解决方案：：1 在开发的过程当中。。如果能实现一模一样的需求，尽可能的使用相对布局。。
+            2 比较灵活。。
+			3 用户体验比较好。
+		    4 在解析XML的时候，可能相对布局打印出来的时候，比线性布局打印出来的时间长，但是那个是假象。。
+			5 核心功能就是减少冗余的层次从而达到优化UI的目的！	
+			6 ViewStub 是一个隐藏的，不占用内存空间的视图对象，它可以在运行时延迟加载布局资源文件。
+merge 目的 ：核心功能就是减少冗余的层次从而达到优化UI的目的！		
+      Activity ：	控制器。。
+	  window   ：   窗体 才是我们能看到的，把view画到window上我们就能看到
+	  view     ：   view
+ViewStub  控件。。	   
+	是一个隐藏的，不占用内存空间的视图对象，它可以在运行时延迟加载布局资源
+	用法：通过 findbyid找到viewstub之后，调用 viewstub.inflate(); 就会返回一个View对象。
+	
+	SDK 下看UI 更本质的工具 ---- Hierarchy viewer.
+ */
 public class HomeFragment extends BaseFragment {
 
 	private View view;
 	private LazyViewPager viewPager;
 	private RadioGroup radio_group;
-
+	
+	private int checkedId = R.id.rb_function;
+	
 	@Override
 	public View initView(LayoutInflater inflater) {
 		// xml 转换成 View
@@ -63,7 +93,39 @@ public class HomeFragment extends BaseFragment {
 		viewPager.setAdapter(adapter);
 		
 		
-		
+		// 添加它radio_group 的 点击事件
+		radio_group.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				switch ( checkedId) {
+				case R.id.rb_function:
+					viewPager.setCurrentItem(0, false);  // false 是不经过中间页
+					checkedId = 0;
+					break;
+
+				case R.id.rb_news_center:
+					// ViewPager 的 setCurrentItem 方法反方便;
+					viewPager.setCurrentItem(1, false);
+					checkedId = 1;
+					break;
+				case R.id.rb_smart_service:
+					viewPager.setCurrentItem(2, false);
+					checkedId = 2;
+					break;
+				case R.id.rb_gov_affairs:
+					viewPager.setCurrentItem(3, false);
+					checkedId = 3;
+					break;
+				case R.id.rb_setting:
+					viewPager.setCurrentItem(4, false);
+					checkedId = 4;
+					break;
+				}
+			}
+			
+		});
+		radio_group.check(checkedId);   // 设置选中的 RadioButton
 	}
 
 	
