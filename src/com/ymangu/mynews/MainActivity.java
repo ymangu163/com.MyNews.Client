@@ -3,9 +3,12 @@ package com.ymangu.mynews;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.ymangu.mynews.fragment.Fragment1;
 import com.ymangu.mynews.fragment.MenuFragment;
+import com.ymangu.mynews.fragment.RightMenuFragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.Window;
 
 /**
@@ -38,12 +41,17 @@ public class MainActivity extends SlidingFragmentActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);  // 无Title
 		
 		setBehindContentView(R.layout.menu_lay); // slidingMenu的布局
-		setContentView(R.layout.activity_main);  // 内容布局
+		setContentView(R.layout.content_lay);  // 内容布局
+		
+		// 默认一个初始值
+		Fragment fragment1 = new Fragment1();
+		getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment1).commit();
+		
 		
 		sm = getSlidingMenu(); // 1 得到滑动菜单
 		// 2设置滑动菜单是在左边出来还是右边出来
 		// 参数可以设置左边LEFT，也可以设置右边RIGHT ，还能设置左右LEFT_RIGHT
-		sm.setMode(SlidingMenu.LEFT);
+		sm.setMode(SlidingMenu.LEFT_RIGHT);
 		// 3设置滑动菜单出来之后，内容页，显示的剩余宽度
 		sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		// 4 设置滑动菜单的阴影 设置阴影，阴影需要在开始的时候，特别暗，慢慢的变淡
@@ -67,6 +75,27 @@ public class MainActivity extends SlidingFragmentActivity {
 				//提交
 				.commit();
 		
+				/**
+				 * 下面的代码是右边侧滑
+				 */
+				sm.setSecondaryMenu(R.layout.right_menu);
+				sm.setSecondaryShadowDrawable(R.drawable.shadowright);
+				RightMenuFragment rightMenuFragment = new RightMenuFragment();
+				getSupportFragmentManager().beginTransaction().replace(R.id.right_menu_frame, rightMenuFragment).commit();
+	
+				
+	}
+	
+	
+	/**
+     *方法D
+     *回调
+     */
+	public void switchFragment(Fragment f){
+		getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, f).commit();
+		//自动切换
+		sm.toggle();		
 		
 	}
+	
 }
