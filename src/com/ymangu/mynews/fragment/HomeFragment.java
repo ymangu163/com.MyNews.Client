@@ -20,6 +20,7 @@ import com.ymangu.mynews.home.GovAffairsPage;
 import com.ymangu.mynews.home.NewsCenterPage;
 import com.ymangu.mynews.home.SettingPage;
 import com.ymangu.mynews.home.SmartServicePage;
+import com.ymangu.mynews.view.CustomViewPager;
 import com.ymangu.mynews.view.LazyViewPager;
 
 /*
@@ -52,7 +53,7 @@ ViewStub  控件。。
 public class HomeFragment extends BaseFragment {
 
 	private View view;
-	private LazyViewPager viewPager;
+	private CustomViewPager viewPager;
 	private RadioGroup radio_group;
 	
 	private int checkedId = R.id.rb_function;
@@ -62,7 +63,7 @@ public class HomeFragment extends BaseFragment {
 		// xml 转换成 View
 		view = inflater.inflate(R.layout.frag_home, null);
 		//  得到 LazyViewPager 
-		viewPager = (LazyViewPager) view.findViewById(R.id.viewpager);
+		viewPager = (CustomViewPager) view.findViewById(R.id.viewpager);
 		// 得到 RadioGroup
 		radio_group = (RadioGroup) view.findViewById(R.id.main_radio);
 		

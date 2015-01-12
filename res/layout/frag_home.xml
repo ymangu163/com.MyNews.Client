@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1.0"
-        class="com.ymangu.mynews.view.LazyViewPager"
+        class="com.ymangu.mynews.view.CustomViewPager"
          />
     <!-- </FrameLayout> -->
 
