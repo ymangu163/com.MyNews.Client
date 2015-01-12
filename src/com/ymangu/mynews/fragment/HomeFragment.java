@@ -111,15 +111,19 @@ public class HomeFragment extends BaseFragment {
 					sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);  // 不出来
 				}
 				
+				/*
+				 * . 找到 相应 page,
+				 *  调用它的 initData(),就调回去了
+				 */
+				BasePage page=list.get(position);
+				page.initData();
 				
-			}
-			
+			}			
 			@Override
 			public void onPageScrolled(int position, float positionOffset,
 					int positionOffsetPixels) {
 				
-			}
-			
+			}			
 			@Override
 			public void onPageScrollStateChanged(int state) {
 				
@@ -160,6 +164,15 @@ public class HomeFragment extends BaseFragment {
 		});
 		radio_group.check(checkedId);   // 设置选中的 RadioButton
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	
 	class HomePageAdapter extends PagerAdapter {
