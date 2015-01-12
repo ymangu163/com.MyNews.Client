@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -12,6 +13,7 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.lidroid.xutils.util.LogUtils;
 import com.ymangu.mynews.base.BasePage;
+import com.ymangu.mynews.bean.NewsCenterBean;
 import com.ymangu.mynews.utils.HMApi;
 
 public class NewsCenterPage extends BasePage {
@@ -42,14 +44,12 @@ public class NewsCenterPage extends BasePage {
 
 					@Override
 					public void onSuccess(ResponseInfo<String> responseInfo) {
-						// textView.setText(responseInfo.result);
 
-						// Gson gson = new Gson();
-						// NewsCenterCategory category =
-						// gson.fromJson(responseInfo.result,
-						// NewsCenterCategory.class);
-						LogUtils.d(responseInfo.result);   // 打印 json 数据
-
+						 Gson gson = new Gson();
+						 // 把 json 数据解析成 Bean
+						 NewsCenterBean category = gson.fromJson(responseInfo.result, NewsCenterBean.class);
+						 LogUtils.d(responseInfo.result);   // 打印 json 数据
+						
 //						ProcessData(responseInfo.result);
 					}
 
