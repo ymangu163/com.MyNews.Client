@@ -1,5 +1,8 @@
 package com.ymangu.mynews.base;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.ymangu.mynews.MainActivity;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +28,7 @@ public abstract class BaseFragment extends Fragment {
 	 
 	public View view;
 	public Context context;
+	public SlidingMenu sm;
 
 	@Override
 	public void onActivityCreated( Bundle savedInstanceState) {
@@ -36,6 +40,7 @@ public abstract class BaseFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		context = getActivity();   // 把上下文传下去
+		sm = ((MainActivity)getActivity()).getSlidingMenu();
 	}
 
 	@Override

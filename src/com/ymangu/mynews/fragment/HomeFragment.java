@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.mynews.R;
 import com.ymangu.mynews.base.BaseFragment;
 import com.ymangu.mynews.base.BasePage;
@@ -22,6 +25,7 @@ import com.ymangu.mynews.home.SettingPage;
 import com.ymangu.mynews.home.SmartServicePage;
 import com.ymangu.mynews.view.CustomViewPager;
 import com.ymangu.mynews.view.LazyViewPager;
+import com.ymangu.mynews.view.LazyViewPager.OnPageChangeListener;
 
 /*
  * . 架构： Fragment + ViewPager
@@ -53,7 +57,9 @@ ViewStub  控件。。
 public class HomeFragment extends BaseFragment {
 
 	private View view;
+	@ViewInject(R.id.viewpager)
 	private CustomViewPager viewPager;
+	@ViewInject(R.id.main_radio)
 	private RadioGroup radio_group;
 	
 	private int checkedId = R.id.rb_function;
@@ -63,10 +69,12 @@ public class HomeFragment extends BaseFragment {
 		// xml 转换成 View
 		view = inflater.inflate(R.layout.frag_home, null);
 		//  得到 LazyViewPager 
-		viewPager = (CustomViewPager) view.findViewById(R.id.viewpager);
+//		viewPager = (CustomViewPager) view.findViewById(R.id.viewpager);
 		// 得到 RadioGroup
-		radio_group = (RadioGroup) view.findViewById(R.id.main_radio);
+//		radio_group = (RadioGroup) view.findViewById(R.id.main_radio);
 		
+		 ViewUtils.inject(this, view); // Fragment 中注入view和事件
+		 
 		return view;
 	}
 
@@ -92,7 +100,31 @@ public class HomeFragment extends BaseFragment {
 		
 		HomePageAdapter adapter = new HomePageAdapter(context,list);
 		viewPager.setAdapter(adapter);
-		
+		viewPager.setOnPageChangeListener(new OnPageChangeListener() {
+			
+			@Override
+			public void onPageSelected(int position) {
+				//如果位置是0的话，才能出现滑动菜单。。如果是其他的tab出现的时候，滑动菜单就给屏蔽掉。
+				if(0==position){
+					  sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+				}else{
+					sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);  // 不出来
+				}
+				
+				
+			}
+			
+			@Override
+			public void onPageScrolled(int position, float positionOffset,
+					int positionOffsetPixels) {
+				
+			}
+			
+			@Override
+			public void onPageScrollStateChanged(int state) {
+				
+			}
+		});
 		
 		// 添加它radio_group 的 点击事件
 		radio_group.setOnCheckedChangeListener(new OnCheckedChangeListener() {
