@@ -105,11 +105,11 @@ public class HomeFragment extends BaseFragment {
 			@Override
 			public void onPageSelected(int position) {
 				//如果位置是0的话，才能出现滑动菜单。。如果是其他的tab出现的时候，滑动菜单就给屏蔽掉。
-				if(0==position){
-					  sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-				}else{
-					sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);  // 不出来
-				}
+//				if(0==position){
+//					  sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+//				}else{
+//					sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);  // 不出来
+//				}
 				
 				/*
 				 * . 找到 相应 page,

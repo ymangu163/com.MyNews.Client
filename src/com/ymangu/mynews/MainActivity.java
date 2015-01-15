@@ -6,6 +6,7 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.ymangu.mynews.fragment.Fragment1;
 import com.ymangu.mynews.fragment.HomeFragment;
 import com.ymangu.mynews.fragment.MenuFragment;
+import com.ymangu.mynews.fragment.MenuFragment2;
 import com.ymangu.mynews.fragment.RightMenuFragment;
 
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.view.Window;
 public class MainActivity extends SlidingFragmentActivity {
 	
 	private SlidingMenu sm;
+	private MenuFragment2 menuFragment;
 
 	/**
      * 1 得到滑动菜单
@@ -66,8 +68,7 @@ public class MainActivity extends SlidingFragmentActivity {
 		// 第三个参数 SlidingMenu.TOUCHMODE_NONE 不能滑动
 		sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
 		
-		// 创建MenuFragment
-		MenuFragment menuFragment = new MenuFragment();
+		menuFragment = new MenuFragment2();
 		//获取fragment的管理者
 				getSupportFragmentManager()
 				//开启事物
@@ -94,6 +95,17 @@ public class MainActivity extends SlidingFragmentActivity {
 				
 	}
 	
+	/**
+	 * 获取菜单
+	 */
+	public MenuFragment2 getMenuFragment2(){
+		/*
+		 * . 为什么不直接抛出去，而要先得到呢？
+		 *  这涉及到 值传递与引用 传递的问题，是为了提高代码健壮性
+		 */
+		 menuFragment = (MenuFragment2) getSupportFragmentManager().findFragmentByTag("Menu");
+		return menuFragment;
+	}
 	
 	/**
      *方法D

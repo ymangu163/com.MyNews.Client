@@ -13,7 +13,7 @@ public class NewsCenterBean {
 
 	/*
 	 * . 1   集合里面只能放对象，不能放基础数据类型
-	 * 2 定义成 static 是它独特的妙处
+	 * 2 定义成 static 是它独特的妙处, 不用 set / get 方法, 一次性拿到所有数据
 	 * 3  CenterDataBean 隶属于data ;属于data 的数据都在这里面定义
 	 */
 	public static class CenterDataBean{
