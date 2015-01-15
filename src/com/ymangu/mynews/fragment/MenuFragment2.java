@@ -20,6 +20,7 @@ import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.mynews.R;
 import com.ymangu.mynews.base.BaseFragment;
+import com.ymangu.mynews.base.HMBaseAdapter;
 /*
  * . 因为多个Page 对应的菜单不一样，最简单的方法就是 建对应的 xxMenuFragment 去替换SlidingMenu的id;
  *   还有更简洁的方法是 建立多个 ListView，迭在同一个FrameLayout 中，控件哪个 Visible 就可以。
@@ -43,7 +44,7 @@ public class MenuFragment2 extends BaseFragment implements OnItemClickListener {
 	}
 
 	private List<String> menuList=new ArrayList<String>();
-	private MenuAdapter adapter;
+	private HMMenuAdpter adapter;
 	/*
 	 * . 初始化菜单数据
 	 */
@@ -52,45 +53,31 @@ public class MenuFragment2 extends BaseFragment implements OnItemClickListener {
 		menuList.addAll(menuNewCenterList);
 		// 提高性能
 		if(adapter==null){
-			adapter = new MenuAdapter(context,menuList);
+			adapter = new HMMenuAdpter(context,menuList);
 			lv_menu_news_center.setAdapter(adapter);			
 		}else{
 			adapter.notifyDataSetChanged();   //如果存在的话，只需要刷新一下就好了
 		}
-		adapter.setCurPosition(0);  // 调用指定位置的方法
+		adapter.setSelectedPosition(0);  // 调用指定位置的方法
 	}
 
-	class MenuAdapter extends BaseAdapter{
-		private Context context;
-		private List<String> menuList;
+	
+	
+	/*
+	 *  使用黑马 高大上的 adapter
+	 */
+	class HMMenuAdpter extends HMBaseAdapter{
 		private int selectedPosition=0; // 打个标记，选中的项，默认选中第1项
-		public MenuAdapter(Context context, List<String> menuList) {
-			this.context=context;
-			this.menuList=menuList;
-		}
-		/*
-		 * . 加个方法，打个标记  记录选中的位置
-		 */
-		public void  setCurPosition(int position){
-			this.selectedPosition=position;			
-			notifyDataSetChanged();   //记住要去刷新
-		}
 		
-		@Override
-		public int getCount() {
-			return menuList.size();
+		public HMMenuAdpter(Context context, List list) {
+			super(context, list);   // 在父类是已经初始化了
 		}
 
-		@Override
-		public Object getItem(int position) {
-			return menuList.get(position);
-		}
+		public void setSelectedPosition(int position) {
+			selectedPosition = position;
+			notifyDataSetInvalidated();
 
-		@Override
-		public long getItemId(int position) {
-			return position;
 		}
-
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if(convertView==null){
@@ -116,19 +103,20 @@ public class MenuFragment2 extends BaseFragment implements OnItemClickListener {
 				iv.setBackgroundResource(R.drawable.menu_arr_normal);
 				tv.setTextColor(context.getResources().getColor(R.color.white));
 			}
-			
 			return convertView;
 		}
 		
 		
-	}
+		
+	}	
+	
 	
    // ListView 的 Item 点击事件
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		adapter.setCurPosition(position);
-		
+		adapter.setSelectedPosition(position);
+		sm.toggle();
 		
 	}
 	
