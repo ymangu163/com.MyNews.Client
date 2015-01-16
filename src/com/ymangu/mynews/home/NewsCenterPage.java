@@ -40,7 +40,16 @@ public class NewsCenterPage extends BasePage {
 		LogUtils.d("新闻中心到了，靖下车");
 		return textView;
 	}
-
+  
+	/*
+	 *  1  没有网络的时候，提高用户体验，因为不缓存数据的话，会成一片空白
+	 *  2  有可能，如果能联网的话，我们需要去更新数据
+	 *  3  在开发的过程中，首先，必须先从本地去找数据
+	 *    ① 如果本地有就显示
+	 *    ② 然后再通过去与服务器交互，从服务器取数据
+	 *    ③ 然后再显示
+	 *    
+	 */
 	@Override
 	public void initData() {
 		String value=SharePrefUtil.getString(context, HMApi.NEWS_CENTER_CATEGORIES);
