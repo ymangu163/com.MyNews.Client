@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -22,6 +25,7 @@ import com.ymangu.mynews.bean.NewsCenterBean.CenterDataBean;
 import com.ymangu.mynews.fragment.MenuFragment2;
 import com.ymangu.mynews.utils.GsonUtils;
 import com.ymangu.mynews.utils.HMApi;
+import com.ymangu.mynews.utils.SharePrefUtil;
 
 public class NewsCenterPage extends BasePage {
 
@@ -39,6 +43,10 @@ public class NewsCenterPage extends BasePage {
 
 	@Override
 	public void initData() {
+		String value=SharePrefUtil.getString(context, HMApi.NEWS_CENTER_CATEGORIES);
+		if(!TextUtils.isEmpty(value)){
+			ProcessData(value);       // 在这里去渲染数据
+		}
 		TestGet();
 		
 	}
@@ -57,8 +65,10 @@ public class NewsCenterPage extends BasePage {
 //						 NewsCenterBean category = gson.fromJson(responseInfo.result, NewsCenterBean.class);
 						 LogUtils.d(responseInfo.result);   // 打印 json 数据
 						
+				    // 使用SharePreference 缓存数据，
+					SharePrefUtil.saveString(context, HMApi.NEWS_CENTER_CATEGORIES, responseInfo.result);
 						
-						ProcessData(responseInfo.result);
+						
 					}
 
 					@Override
