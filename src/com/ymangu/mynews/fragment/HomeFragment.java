@@ -16,6 +16,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.ymangu.mynews.MainActivity;
 import com.ymangu.mynews.R;
 import com.ymangu.mynews.base.BaseFragment;
 import com.ymangu.mynews.base.BasePage;
@@ -56,7 +57,7 @@ ViewStub  控件。。
 	
 	SDK 下看UI 更本质的工具 ---- Hierarchy viewer.
  */
-public class HomeFragment extends BaseFragment implements DownFlagInterface{
+public class HomeFragment extends BaseFragment {
 
 	private View view;
 	@ViewInject(R.id.viewpager)
@@ -65,8 +66,8 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 	private RadioGroup radio_group;
 	
 	private int checkedId = R.id.rb_function;
-	public DownFlagInterface downFlagInterface;
 	private boolean down_flag;
+	private MenuFragment2 menuFragment;
 	
 	@Override
 	public View initView(LayoutInflater inflater) {
@@ -82,7 +83,7 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 		return view;
 	}
 
-	private List<BasePage> list = new ArrayList<BasePage>();
+	private List<BasePage> list_pages = new ArrayList<BasePage>();
 	/*
 	 * . 因为 ViewPager 继承自 ViewGroup，所以加入的元素是 View
 	 *   定义 5个 View，还要定义一个集合 来装载这5个 View,并把它设置到 ViewPager中
@@ -91,21 +92,25 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 	 */
 	@Override
 	public void initData(Bundle savedInstanceState) {
-		downFlagInterface=(DownFlagInterface)new HomeFragment();   //要生成接口的对象，不然会空指针异常
+
+		// 得到滑动菜单
+		menuFragment= (MenuFragment2)((MainActivity)getActivity()).getSupportFragmentManager().findFragmentByTag("Menu");
 		
 		/*
 		 * . 把5 个 Page 装载进集合
 		 *  注意：
 		 *     	这里ViewPager 中载入的 是5个普通 的类，不是 Activity 也不是 Fragment
 		 */
-		list.add(new FunctionPage(context));
-		list.add(new NewsCenterPage(context));
-		list.add(new SmartServicePage(context));
-		list.add(new GovAffairsPage(context));
-		list.add(new SettingPage(context));
+		list_pages.add(new FunctionPage(context));
+		list_pages.add(new NewsCenterPage(context));
+		list_pages.add(new SmartServicePage(context));
+		list_pages.add(new GovAffairsPage(context));
+		list_pages.add(new SettingPage(context));
 		
-		HomePageAdapter adapter = new HomePageAdapter(context,list);
+		HomePageAdapter adapter = new HomePageAdapter(context,list_pages);
 		viewPager.setAdapter(adapter);
+		viewPager.setScrollable(false);  //禁止底层的ViewPager滑动
+		viewPager.setOffscreenPageLimit(0);   // 预加载0项
 		viewPager.setOnPageChangeListener(new OnPageChangeListener() {
 			
 			@Override
@@ -122,10 +127,10 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 				 *  调用它的 initData(),就调回去了
 				 *   所以可以在这里打个标记，让它只第一次进入这个页时去下载数据，再点就不去下载了
 				 */
-				BasePage page=list.get(position);
-				if(!down_flag){
-					page.initData(downFlagInterface);				
-					LogUtils.d("down_flag: "+down_flag);
+				BasePage page=list_pages.get(position);
+				LogUtils.d("isLoadSuccess= "+page.isLoadSuccess);
+				if(!page.isLoadSuccess){
+					page.initData();								
 				}
 			}			
 			@Override
@@ -139,6 +144,8 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 			}
 		});
 		
+		initPages();   // 初始化 Pages
+		
 		// 添加它radio_group 的 点击事件
 		radio_group.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -147,12 +154,21 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 				switch ( checkedId) {
 				case R.id.rb_function:
 					viewPager.setCurrentItem(0, false);  // false 是不经过中间页
+					sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
 					checkedId = 0;
 					break;
 
 				case R.id.rb_news_center:
 					// ViewPager 的 setCurrentItem 方法反方便;
 					viewPager.setCurrentItem(1, false);
+					sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+					NewsCenterPage newsPage = (NewsCenterPage) list_pages.get(1);
+//					newsPage.refreshSmMode();
+					if (menuFragment != null) {
+						menuFragment.setMenuType(MenuFragment2.NEWS_CENTER);
+						// sm.showMenu();
+					}
+					
 					checkedId = 1;
 					break;
 				case R.id.rb_smart_service:
@@ -165,6 +181,7 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 					break;
 				case R.id.rb_setting:
 					viewPager.setCurrentItem(4, false);
+					sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
 					checkedId = 4;
 					break;
 				}
@@ -174,15 +191,18 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 		radio_group.check(checkedId);   // 设置选中的 RadioButton
 	}
 	
+		
+	public NewsCenterPage getNewsCenterPage(){
+		NewsCenterPage page=(NewsCenterPage)list_pages.get(1);
+		return page;	
+		
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-
+	private void initPages() {		
+		list_pages.get(0).initData();
+		viewPager.setCurrentItem(0);
+		
+	}
 	
 	class HomePageAdapter extends PagerAdapter {
 		
@@ -206,7 +226,6 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
-//			super.destroyItem(container, position, object);
 			((LazyViewPager) container).removeView(list.get(position)	.getRootView());			
 			
 		}
@@ -219,16 +238,6 @@ public class HomeFragment extends BaseFragment implements DownFlagInterface{
 		
 	}
 
-	@Override
-	public void setDownFlag(boolean downFlag) {
-		this.down_flag=downFlag;		
-		LogUtils.d("down_flag="+down_flag+"   downFlag="+downFlag);		
-	}
-	
-	@Override
-	public boolean getDownFlag() {		
-		return this.down_flag;
-	}
 
 
 	

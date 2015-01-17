@@ -22,7 +22,7 @@ public class SettingPage  extends BasePage{
 	}
 
 	@Override
-	public void initData(DownFlagInterface downFlagInterface) {
+	public void initData() {
 		
 	}
 

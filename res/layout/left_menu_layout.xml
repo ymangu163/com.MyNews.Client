@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:padding="3dp"
-        android:text="鍒嗙被"
+        android:text="分类"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="invisible" />

@@ -52,10 +52,10 @@ public class NewsCenterPage extends BasePage {
 	 *    
 	 */
 	@Override
-	public void initData(DownFlagInterface downFlagInterface) {
+	public void initData() {
 		String value=SharePrefUtil.getString(context, HMApi.NEWS_CENTER_CATEGORIES);
 		if(!TextUtils.isEmpty(value)){
-			ProcessData(downFlagInterface,value);       // 在这里去渲染数据
+			ProcessData(value);       // 在这里去渲染数据
 		}
 		TestGet();
 		
@@ -94,7 +94,7 @@ public class NewsCenterPage extends BasePage {
 	 * MainActivity 中暴露一个方法得到 MenuFragment2 对象(不 new 是为了代码更清洁)；拿到
 	 * MenuFragment2对象后就可以调用它的方法去初始化菜单了。
 	 */
-	protected void ProcessData(DownFlagInterface downFlagInterface,String result) {
+	protected void ProcessData(String result) {
 		NewsCenterBean newsCenterBean=GsonUtils.jsonToBean(result, NewsCenterBean.class);  //写得更通用
 		
 		if (200 == newsCenterBean.retcode) {
@@ -106,7 +106,7 @@ public class NewsCenterPage extends BasePage {
 			MenuFragment2 menuFragment2 = ((MainActivity)context).getMenuFragment2();
 			menuFragment2.initMenu(menuNewCenterList);   //把数据传过去
 			
-			downFlagInterface.setDownFlag(true);  //设置让它不再下载了
+			isLoadSuccess=true;
 			
 			
 		}

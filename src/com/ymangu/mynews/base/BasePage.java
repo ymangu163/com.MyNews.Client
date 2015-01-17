@@ -13,7 +13,8 @@ import android.view.View;
 public abstract class BasePage {
 	public View view;
 	public Context context;
-	
+	public boolean isLoadSuccess=false;
+
 	/*
 	 * . 1 画界面
 	 *   2 初始化数据
@@ -33,7 +34,7 @@ public abstract class BasePage {
     }
 	
 	public abstract View initView(LayoutInflater inflater);
-	public abstract void initData(DownFlagInterface downFlagInterface);
+	public abstract void initData();
 
 
 	

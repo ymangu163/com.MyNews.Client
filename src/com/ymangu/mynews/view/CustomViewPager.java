@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 public class CustomViewPager extends LazyViewPager {
 	
 	// 定义一个标记，
-	private boolean setTouchModel = false;  
+	private boolean isScrollable = false;  
 
 	public CustomViewPager(Context context) {
 		super(context);
@@ -26,7 +26,7 @@ public class CustomViewPager extends LazyViewPager {
 	 */
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		if(setTouchModel){
+		if(isScrollable){
 			return super.onInterceptTouchEvent(ev);			
 		}else{
 			return false;
@@ -36,11 +36,19 @@ public class CustomViewPager extends LazyViewPager {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
-		if(setTouchModel){
+		if(isScrollable){
 			return super.onTouchEvent(ev);
 		}else{
 			return false;
 		}
+	}
+	
+	public boolean isScrollable(){
+		return isScrollable;
+	}
+	
+	public void setScrollable(boolean isScrollable){
+		this.isScrollable=isScrollable;
 	}
 	
 }

@@ -22,7 +22,7 @@ public class FunctionPage  extends BasePage{
 	}
 
 	@Override
-	public void initData(DownFlagInterface downFlagInterface) {
+	public void initData() {
 		
 	}
 
