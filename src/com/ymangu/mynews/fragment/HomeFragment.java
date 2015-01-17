@@ -14,6 +14,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.mynews.R;
 import com.ymangu.mynews.base.BaseFragment;
@@ -23,6 +24,7 @@ import com.ymangu.mynews.home.GovAffairsPage;
 import com.ymangu.mynews.home.NewsCenterPage;
 import com.ymangu.mynews.home.SettingPage;
 import com.ymangu.mynews.home.SmartServicePage;
+import com.ymangu.mynews.intface.DownFlagInterface;
 import com.ymangu.mynews.view.CustomViewPager;
 import com.ymangu.mynews.view.LazyViewPager;
 import com.ymangu.mynews.view.LazyViewPager.OnPageChangeListener;
@@ -54,7 +56,7 @@ ViewStub  控件。。
 	
 	SDK 下看UI 更本质的工具 ---- Hierarchy viewer.
  */
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment implements DownFlagInterface{
 
 	private View view;
 	@ViewInject(R.id.viewpager)
@@ -63,6 +65,8 @@ public class HomeFragment extends BaseFragment {
 	private RadioGroup radio_group;
 	
 	private int checkedId = R.id.rb_function;
+	public DownFlagInterface downFlagInterface;
+	private boolean down_flag;
 	
 	@Override
 	public View initView(LayoutInflater inflater) {
@@ -87,6 +91,8 @@ public class HomeFragment extends BaseFragment {
 	 */
 	@Override
 	public void initData(Bundle savedInstanceState) {
+		downFlagInterface=(DownFlagInterface)new HomeFragment();   //要生成接口的对象，不然会空指针异常
+		
 		/*
 		 * . 把5 个 Page 装载进集合
 		 *  注意：
@@ -114,10 +120,13 @@ public class HomeFragment extends BaseFragment {
 				/*
 				 * . 找到 相应 page,
 				 *  调用它的 initData(),就调回去了
+				 *   所以可以在这里打个标记，让它只第一次进入这个页时去下载数据，再点就不去下载了
 				 */
 				BasePage page=list.get(position);
-				page.initData();
-				
+				if(!down_flag){
+					page.initData(downFlagInterface);				
+					LogUtils.d("down_flag: "+down_flag);
+				}
 			}			
 			@Override
 			public void onPageScrolled(int position, float positionOffset,
@@ -209,5 +218,18 @@ public class HomeFragment extends BaseFragment {
 		}		
 		
 	}
+
+	@Override
+	public void setDownFlag(boolean downFlag) {
+		this.down_flag=downFlag;		
+		LogUtils.d("down_flag="+down_flag+"   downFlag="+downFlag);		
+	}
+	
+	@Override
+	public boolean getDownFlag() {		
+		return this.down_flag;
+	}
+
+
 	
 }

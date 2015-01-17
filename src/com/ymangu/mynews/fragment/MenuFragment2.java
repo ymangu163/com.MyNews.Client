@@ -119,6 +119,7 @@ public class MenuFragment2 extends BaseFragment implements OnItemClickListener {
 		sm.toggle();
 		
 	}
-	
+
+
 	
 }

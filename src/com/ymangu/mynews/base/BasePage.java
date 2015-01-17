@@ -1,5 +1,7 @@
 package com.ymangu.mynews.base;
 
+import com.ymangu.mynews.intface.DownFlagInterface;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +33,9 @@ public abstract class BasePage {
     }
 	
 	public abstract View initView(LayoutInflater inflater);
-	public abstract void initData();
+	public abstract void initData(DownFlagInterface downFlagInterface);
+
+
 	
 	}
 	

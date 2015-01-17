@@ -1,7 +1,9 @@
 package com.ymangu.mynews.base;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.lidroid.xutils.util.LogUtils;
 import com.ymangu.mynews.MainActivity;
+import com.ymangu.mynews.intface.DownFlagInterface;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -24,11 +26,12 @@ import android.view.ViewGroup;
 	 *  Fragment 方法抽取： 把相同功能的代码丢到父类中
 	 *  *  */
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment{
 	 
 	public View view;
 	public Context context;
 	public SlidingMenu sm;
+
 
 	@Override
 	public void onActivityCreated( Bundle savedInstanceState) {
@@ -50,6 +53,8 @@ public abstract class BaseFragment extends Fragment {
 		
 		return view;
 	}
+	
+
 
 	// 初始化 View ；抽象方法  ，由子类实现
 	public  abstract View initView(LayoutInflater inflater);

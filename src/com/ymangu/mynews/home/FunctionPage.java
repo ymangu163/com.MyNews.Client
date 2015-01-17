@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ymangu.mynews.base.BasePage;
+import com.ymangu.mynews.intface.DownFlagInterface;
 
 public class FunctionPage  extends BasePage{
 
@@ -21,7 +22,7 @@ public class FunctionPage  extends BasePage{
 	}
 
 	@Override
-	public void initData() {
+	public void initData(DownFlagInterface downFlagInterface) {
 		
 	}
 
