@@ -226,14 +226,14 @@ public class HomeFragment extends BaseFragment {
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
-			((LazyViewPager) container).removeView(list.get(position)	.getRootView());			
+			((LazyViewPager) container).removeView(list.get(position)	.getContentView());			
 			
 		}
 
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
-			((LazyViewPager)container).addView(list.get(position).getRootView(),0);
-			return list.get(position).getRootView();
+			((LazyViewPager)container).addView(list.get(position).getContentView(),0);
+			return list.get(position).getContentView();
 		}		
 		
 	}

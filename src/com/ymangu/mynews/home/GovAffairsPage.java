@@ -26,4 +26,9 @@ public class GovAffairsPage  extends BasePage{
 		
 	}
 
+	@Override
+	protected void processClick(View v) {
+		
+	}
+
 }

@@ -26,4 +26,9 @@ public class SettingPage  extends BasePage{
 		
 	}
 
+	@Override
+	protected void processClick(View v) {
+		
+	}
+
 }

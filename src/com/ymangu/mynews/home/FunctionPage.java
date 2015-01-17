@@ -26,4 +26,9 @@ public class FunctionPage  extends BasePage{
 		
 	}
 
+	@Override
+	protected void processClick(View v) {
+		
+	}
+
 }

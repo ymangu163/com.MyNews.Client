@@ -26,4 +26,9 @@ public class SmartServicePage  extends BasePage{
 		
 	}
 
+	@Override
+	protected void processClick(View v) {
+		
+	}
+
 }

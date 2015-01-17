@@ -51,7 +51,8 @@ public class MenuFragment2 extends BaseFragment implements OnItemClickListener {
 
 	@Override
 	public void initData(Bundle savedInstanceState) {
-				mainActivity = (MainActivity)context;				
+				mainActivity = (MainActivity)context;			
+				newsCenterPage = new NewsCenterPage(context);
 				switchMenu(menuType);
 	}
 
@@ -91,6 +92,7 @@ public class MenuFragment2 extends BaseFragment implements OnItemClickListener {
 	private int menuType = 0;
 	private FragmentManager fragManager;
 	private NewsCenterPage newsCenterFragment;
+	private NewsCenterPage newsCenterPage;
 	
 	/*
 	 * . 初始化菜单数据
@@ -178,6 +180,9 @@ public class MenuFragment2 extends BaseFragment implements OnItemClickListener {
 			sm.toggle();			
 		}
 		adapter.setSelectedPosition(position);
+		newsCenterPage.switchFragment(position);   // 点击ListView时，实现跳转
+		
+		
 		
 	}
 
