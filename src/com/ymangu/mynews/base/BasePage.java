@@ -99,6 +99,7 @@ public abstract class BasePage implements OnClickListener {
 		HttpUtils http = new HttpUtils();
 		http.configCurrentHttpCacheExpiry(1000 * 1);
 		LogUtils.allowD = true;
+		// 进行一些判断，和前面其实是一样的
 		if (params != null) {
 			if (params.getQueryStringParams() != null)
 				LogUtils.d(url + params.getQueryStringParams().toString());
@@ -113,7 +114,7 @@ public abstract class BasePage implements OnClickListener {
 		if (0 == CommonUtil.isNetworkAvailable(context)) {
 			showToast("无网络，请检查网络连接！");
 		} else {
-			http.send(method, url, params, callback);
+			http.send(method, url, params, callback);  // 提交数据到服务器
 		}
 	}
 	@Override

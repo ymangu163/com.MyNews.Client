@@ -18,6 +18,7 @@ import com.ymangu.mynews.R;
 import com.ymangu.mynews.base.BasePage;
 import com.ymangu.mynews.bean.NewsCenterBean;
 import com.ymangu.mynews.bean.NewsCenterBean.CenterDataBean;
+import com.ymangu.mynews.bean.NewsCenterBean.CenterDataChildrenBean;
 import com.ymangu.mynews.home.FunctionPage;
 import com.ymangu.mynews.home.GovAffairsPage;
 import com.ymangu.mynews.home.NewsCenterPage;
@@ -61,25 +62,23 @@ public class NewsPage extends BasePage {
 		return view;
 	}
 	 
-
 	@Override
 	public void initData() {
-		list_pages.add(new FunctionPage(context));
-		list_pages.add(new NewsCenterPage(context));
-		list_pages.add(new SmartServicePage(context));
-		list_pages.add(new GovAffairsPage(context));
-		list_pages.add(new SettingPage(context));
-		
 		initIndicator();
 	}
-	
-	
-	private ArrayList<BasePage> list_pages = new ArrayList<BasePage>();
+		
+	private ArrayList<ItemNewsPage> list_pages = new ArrayList<ItemNewsPage>();
 	private NewsPagerAdapter adapter;
 	
 	
 
 	private void initIndicator() {
+		list_pages.clear();   // 渲染前先清空，让它没有杂质
+		for(CenterDataChildrenBean cate:category.children){  // 获取到数据
+			list_pages.add(new ItemNewsPage(context,cate.url));	 //把对应的url传递过去		
+			
+		}		
+		
 		adapter = new NewsPagerAdapter(context,list_pages);
 		viewPager.removeAllViews();
 		viewPager.setAdapter(adapter);
@@ -125,9 +124,9 @@ public class NewsPage extends BasePage {
 	}
 
 	class NewsPagerAdapter extends PagerAdapter{
-		private ArrayList<BasePage> list_pages;
+		private ArrayList<ItemNewsPage> list_pages;
 
-		public NewsPagerAdapter(Context context,ArrayList<BasePage> list){
+		public NewsPagerAdapter(Context context,ArrayList<ItemNewsPage> list){
 			this.list_pages=list;	
 			
 		}
