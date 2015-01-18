@@ -147,14 +147,14 @@ public class NewsCenterPage extends BasePage {
 			BasePage newsPage = new NewsPage(context, newsDataBean);
 			BasePage topicPage = new TopicPage(context, dataList.get(1));
 			BasePage picPage = new PicPage(context, dataList.get(2));
-			BasePage interactPage = new InteractPage(context, dataList.get(3));
-			BasePage votePage = new VotePage(context, dataList.get(4));
+//			BasePage interactPage = new InteractPage(context, dataList.get(3));
+//			BasePage votePage = new VotePage(context, dataList.get(4));
 			
 			pageList.add(newsPage);
 			pageList.add(topicPage);
 			pageList.add(picPage);
-			pageList.add(interactPage);
-			pageList.add(votePage);
+//			pageList.add(interactPage);
+//			pageList.add(votePage);
 			switchFragment(MenuFragment2.newsCenterPosition);   // 切换到不同的页
 			
 	}
@@ -190,7 +190,7 @@ public class NewsCenterPage extends BasePage {
 			news_center_fl.addView(page.getContentView());
 			break;
 		}
-		page.initData();
+		page.initData();    // 调相应页的数据
 		
 		
 	}

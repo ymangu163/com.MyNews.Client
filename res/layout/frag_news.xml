@@ -12,13 +12,13 @@
          android:background="@drawable/news_tab_bg"
         android:orientation="horizontal" >
 		<!-- 切换时跟着划动的线  -->
-<!--         <com.qianlong.android.view.pagerindicator.TabPageIndicator
+        <com.ymangu.mynews.view.pagerindicator.TabPageIndicator
             android:id="@+id/indicator"
             style="@style/Theme.PageIndicatorDefaults"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingBottom="2dp" /> -->
+            android:paddingBottom="2dp" />
 
         <ImageView
             android:id="@+id/iv_edit_cate"
