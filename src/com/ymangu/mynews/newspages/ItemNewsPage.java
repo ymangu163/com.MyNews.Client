@@ -91,14 +91,32 @@ public class ItemNewsPage extends BasePage {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
-						
-						
+						// 点击，跳转
+						Intent intent = new Intent(context, NewsDetailActivity.class);
+						String url = "";
+						String title;
+						News newsItem;
+						if (ptrLv.getRefreshableView().getHeaderViewsCount() > 0) {
+							newsItem = news_list.get(position - 1);
+						} else {
+							newsItem = news_list.get(position);
+						}
+						url = newsItem.url;
+						if(!newsItem.isRead){
+							readSet.add(newsItem.id);
+							newsItem.isRead= true;
+							SharePrefUtil.saveString(context, Constants.READ_NEWS_IDS, hasReadIds+","+newsItem.id);
+						}
+						title = newsItem.title;
+						intent.putExtra("url", url);
+						intent.putExtra("title", title);
+						context.startActivity(intent);				
 						
 						
 					}
 		});
 		
-//		setLastUpdateTime();   // 设置上一次刷新的时间
+		setLastUpdateTime();   // 设置上一次刷新的时间
 		
 		// 设置下拉刷新的listener  
 		ptrLv.setOnRefreshListener(new OnRefreshListener<ListView>() {
@@ -120,6 +138,12 @@ public class ItemNewsPage extends BasePage {
 		
 	
 		return view;    // 返回包含 PullToRefreshListView 的View
+	}
+
+	private void setLastUpdateTime() {
+		String text = CommonUtil.getStringDate();
+		ptrLv.setLastUpdatedLabel(text);	
+		
 	}
 
 	// 去更新数据
@@ -261,7 +285,7 @@ public class ItemNewsPage extends BasePage {
 					ptrLv.setHasMoreData(true);
 				}
 				
-//				setLastUpdateTime();
+				setLastUpdateTime();
 			}
 		});
 		
@@ -412,7 +436,7 @@ public class ItemNewsPage extends BasePage {
 			} else {
 				ptrLv.setHasMoreData(true);
 			}
-//			setLastUpdateTime();
+			setLastUpdateTime();
 		}
 		
 		

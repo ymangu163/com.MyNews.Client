@@ -1,12 +1,10 @@
 package com.ymangu.mynews.newspages;
 
 import java.util.ArrayList;
-import java.util.List;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +14,9 @@ import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.ymangu.mynews.R;
 import com.ymangu.mynews.base.BasePage;
-import com.ymangu.mynews.bean.NewsCenterBean;
 import com.ymangu.mynews.bean.NewsCenterBean.CenterDataBean;
 import com.ymangu.mynews.bean.NewsCenterBean.CenterDataChildrenBean;
-import com.ymangu.mynews.home.FunctionPage;
-import com.ymangu.mynews.home.GovAffairsPage;
 import com.ymangu.mynews.home.NewsCenterPage;
-import com.ymangu.mynews.home.SettingPage;
-import com.ymangu.mynews.home.SmartServicePage;
 import com.ymangu.mynews.view.pagerindicator.TabPageIndicator;
 /*
  *  框架清理：
@@ -93,7 +86,8 @@ public class NewsPage extends BasePage {
 				}else{
 					sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
 				}
-				BasePage page = list_pages.get(position);
+				
+				ItemNewsPage  page = list_pages.get(position);
 				if(!page.isLoadSuccess){
 					page.initData();   //去初始化数据
 				}
@@ -133,7 +127,7 @@ public class NewsPage extends BasePage {
 		
 		@Override
 		public int getCount() {
-			return list_pages.size();
+			return category.children.size();
 		}
 
 		@Override
@@ -143,7 +137,6 @@ public class NewsPage extends BasePage {
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
-//			super.destroyItem(container, position, object);
 			if(position>=list_pages.size()) return;
 			((ViewPager)container).removeView(list_pages.get(position).getContentView());
 		}
@@ -154,6 +147,15 @@ public class NewsPage extends BasePage {
 			
 			return list_pages.get(position).getContentView();
 		}			
+		
+		//加入这个方法 就能看到title了
+		@Override
+		public CharSequence getPageTitle(int position) {
+			int size=category.children.size();					
+			
+			return category.children.get(position%size).title;
+		}
+		
 	}
 
 

@@ -67,7 +67,7 @@ public class PullToRefreshListView extends PullToRefreshBase<ListView> implement
     protected ListView createRefreshableView(Context context, AttributeSet attrs) {
         ListView listView = new ListView(context,attrs);
         // 这个list 报错，为何？
-//        listView.setId(R.id.list);
+        listView.setId(android.R.id.list);
         mListView = listView;
 //        mListView.setFooterDividersEnabled(true);
         
