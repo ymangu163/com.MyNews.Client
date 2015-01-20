@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="185dp"
      >
-        <!--   -->
+        <!--  上边放图片的布局，所以和下边是叠加的关系 -->
         <LinearLayout
             android:id="@+id/top_news_viewpager"
             android:layout_width="fill_parent"

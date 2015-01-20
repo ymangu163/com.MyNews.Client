@@ -69,6 +69,7 @@ public abstract class BasePage implements OnClickListener {
 	}
 	@ViewInject(R.id.loading_view)
 	protected View loadingView;
+	
 	public void dismissLoadingView() {
 		if (loadingView != null)
 			loadingView.setVisibility(View.INVISIBLE);

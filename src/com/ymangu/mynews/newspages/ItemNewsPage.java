@@ -22,10 +22,14 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.lidroid.xutils.util.LogUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.ymangu.mynews.NewsAdapter;
 import com.ymangu.mynews.R;
 import com.ymangu.mynews.base.BasePage;
+import com.ymangu.mynews.bean.CountList;
 import com.ymangu.mynews.bean.NewsCenterBean;
 import com.ymangu.mynews.bean.NewsListBean;
+import com.ymangu.mynews.bean.NewsListBean.News;
+import com.ymangu.mynews.bean.NewsListBean.NewsList;
 import com.ymangu.mynews.bean.NewsListBean.TopNews;
 import com.ymangu.mynews.utils.CommonUtil;
 import com.ymangu.mynews.utils.Constants;
@@ -58,11 +62,12 @@ public class ItemNewsPage extends BasePage {
 	private ArrayList<String> urlList;
 	private ArrayList<View> dotList;
 	private RollViewPager rollViewPager;
+	private ArrayList<News> news_list=new ArrayList<NewsListBean.News> ();
 
 	public ItemNewsPage(Context context, String url) {
 		super(context);
-		this.url = url;
-	}
+		this.url = url;      // 传递进来的url
+	}  
 
 	@Override
 	public View initView(LayoutInflater inflater) {
@@ -71,6 +76,7 @@ public class ItemNewsPage extends BasePage {
 		 *  
 		 */
 		View view = inflater.inflate(R.layout.frag_item_news, null);
+		 // 这个 topNewsView 是要加到ListView中充当Header.
 	     topNewsView = inflater.inflate(R.layout.layout_roll_view, null);
 	     ViewUtils.inject(this, view);
 		 ViewUtils.inject(this, topNewsView);
@@ -91,6 +97,8 @@ public class ItemNewsPage extends BasePage {
 					}
 		});
 		
+//		setLastUpdateTime();   // 设置上一次刷新的时间
+		
 		// 设置下拉刷新的listener  
 		ptrLv.setOnRefreshListener(new OnRefreshListener<ListView>() {
 
@@ -109,12 +117,8 @@ public class ItemNewsPage extends BasePage {
 			
 		});
 		
-		
-		
-		
-		
 	
-		return view;
+		return view;    // 返回包含 PullToRefreshListView 的View
 	}
 
 	// 去更新数据
@@ -133,17 +137,14 @@ public class ItemNewsPage extends BasePage {
 			@Override
 			public void onSuccess(ResponseInfo<String> info) {
 				LogUtils.d("response_json---" + info.result);
-				if(isRefresh){
+				if(isRefresh){  // isRefresh 刷新过就去处理数据
+					// 下载成功之后，去存贮数据  
 					SharePrefUtil.saveString(context, url, info.result);
 				}
 				ProcessData(isRefresh,info.result);   //下载好数据后 去处理
 				
 			}			
 		});
-		
-		
-		
-		
 	}
 
 	protected void ProcessData(boolean isRefresh, String result) {
@@ -151,8 +152,8 @@ public class ItemNewsPage extends BasePage {
 		// 在解析前先判断一下是不是200； 这就是定义BaseBean的用意
 		if (newsList.retcode != 200) {
 		}else{
-			isLoadSuccess = true;
-			countCommentUrl = newsList.data.countcommenturl;
+			isLoadSuccess = true;    // 让它不再去下载
+			countCommentUrl = newsList.data.countcommenturl;    //评论的Url
 			if (isRefresh) {
 				topNews = newsList.data.topnews;
 				if (topNews != null) {
@@ -193,16 +194,16 @@ public class ItemNewsPage extends BasePage {
 				rollViewPager.setTitle(topNewsTitle, titleList);
 				rollViewPager.startRoll();
 				mViewPagerLay.removeAllViews();
-				mViewPagerLay.addView(rollViewPager);
+				mViewPagerLay.addView(rollViewPager);   // 上边部分已经有数据了
 				if (ptrLv.getRefreshableView().getHeaderViewsCount() < 1) {
-					ptrLv.getRefreshableView().addHeaderView(topNewsView);
+					ptrLv.getRefreshableView().addHeaderView(topNewsView);  // 给ListView加头，让上边与下边连成一体
 				} 
 				}
 			}
 			moreUrl = newsList.data.more;
 			if (newsList.data.news != null) {
-//				getNewsCommentCount(newsList.data.countcommenturl,
-//						newsList.data.news, isRefresh);
+				// 加载评论
+				getNewsCommentCount(newsList.data.countcommenturl,newsList.data.news, isRefresh);
 			}
 			
 		}
@@ -210,6 +211,65 @@ public class ItemNewsPage extends BasePage {
 		
 	}
 	
+	private void getNewsCommentCount(String countcommenturl,	final ArrayList<News> newsList, final boolean isRefresh) {
+		StringBuffer sb=new StringBuffer(countcommenturl);
+		for(News news:newsList){
+			sb.append(news.id+",");						
+		}
+		loadData(HttpMethod.GET,sb.toString(),null,new RequestCallBack<String>() {
+
+			private NewsAdapter adapter;
+
+			@Override
+			public void onFailure(HttpException arg0, String arg1) {
+				LogUtils.d("fail_json---" + arg1);
+				onLoaded();
+			}
+
+			@Override
+			public void onSuccess(ResponseInfo<String> info) {
+				LogUtils.d("response_json---" + info.result);
+				CountList countList = QLParser.parse(info.result,	CountList.class);
+				for(News news: newsList){
+							news.commentcount = countList.data.get(news.id + "");
+					 if(readSet.contains(news.id)){  //已经读过
+						 news.isRead=true;
+					 }else{
+						 news.isRead=false;
+					 }
+					
+				}
+				if(isRefresh){
+					news_list.clear();
+					news_list.addAll(newsList);
+					
+				}else{
+					news_list.addAll(newsList);
+				}
+				if(adapter==null){
+					adapter = new NewsAdapter(context,news_list,0);
+					ptrLv.getRefreshableView().setAdapter(adapter);   // 适配后，PullToRefreshListView就可见了
+				}else{
+					adapter.notifyDataSetChanged();
+				}
+				onLoaded();
+				LogUtils.d("moreUrl---" + moreUrl);
+				if (TextUtils.isEmpty(moreUrl)) {
+					ptrLv.setHasMoreData(false);
+				} else{
+					ptrLv.setHasMoreData(true);
+				}
+				
+//				setLastUpdateTime();
+			}
+		});
+		
+		
+		
+		
+		
+	}
+
 	// 初始化广告页的点,   使用java 代码动态适配,而不是写在xml中
 	private void initDot(int size) {
 		dotList = new ArrayList<View>();
@@ -232,7 +292,7 @@ public class ItemNewsPage extends BasePage {
 	}
 
 	protected void onLoaded() {
-		dismissLoadingView();
+		dismissLoadingView();    // 下载时，转圈的view消失
 		ptrLv.onPullDownRefreshComplete();
 		ptrLv.onPullUpRefreshComplete();		
 	}
@@ -241,13 +301,13 @@ public class ItemNewsPage extends BasePage {
 	public void initData() {
 		// 获取保存的已阅读newsid
 		hasReadIds = SharePrefUtil.getString(context,  Constants.READ_NEWS_IDS, "");
-		String[] ids=hasReadIds.split(",");
+		String[] ids=hasReadIds.split(",");   // 将String 分割成数组
 		for(String id:ids){
 			readSet.add(id);     // 把id保存到set中			
 		}
 		
 		if(!TextUtils.isEmpty(url)){
-			String result=SharePrefUtil.getString(context, url, "");
+			String result=SharePrefUtil.getString(context, url, "");  // 先去获取缓存中以url为key的数据
 			if(!TextUtils.isEmpty(result)){
 				processDataFromCache(true, result);
 				
