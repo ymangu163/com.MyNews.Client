@@ -63,7 +63,8 @@ public class ItemNewsPage extends BasePage {
 	private ArrayList<View> dotList;
 	private RollViewPager rollViewPager;
 	private ArrayList<News> news_list=new ArrayList<NewsListBean.News> ();
-
+	private NewsAdapter adapter;
+	
 	public ItemNewsPage(Context context, String url) {
 		super(context);
 		this.url = url;      // 传递进来的url
@@ -218,7 +219,7 @@ public class ItemNewsPage extends BasePage {
 		}
 		loadData(HttpMethod.GET,sb.toString(),null,new RequestCallBack<String>() {
 
-			private NewsAdapter adapter;
+		
 
 			@Override
 			public void onFailure(HttpException arg0, String arg1) {
@@ -309,7 +310,7 @@ public class ItemNewsPage extends BasePage {
 		if(!TextUtils.isEmpty(url)){
 			String result=SharePrefUtil.getString(context, url, "");  // 先去获取缓存中以url为key的数据
 			if(!TextUtils.isEmpty(result)){
-				processDataFromCache(true, result);
+				processDataFromCache(true, result);    // 用缓存中的数据去初始化控件
 				
 			}
 			getNewsList(url, true);   // 去拿数据
@@ -318,7 +319,7 @@ public class ItemNewsPage extends BasePage {
 		
 	}
 	
-
+	// 用缓存中的数据去初始化控件
 	private void processDataFromCache(boolean isRefresh, String result) {
 		NewsListBean newsList = QLParser.parse(result, NewsListBean.class);
 		if (newsList.retcode != 200) {
@@ -326,14 +327,92 @@ public class ItemNewsPage extends BasePage {
 			isLoadSuccess = true;   // 下载成功，就不再下载了
 			countCommentUrl = newsList.data.countcommenturl;
 			if (isRefresh) {
-//				topNews = newsList.data.topnews;
-				
-				
-				
+				topNews = newsList.data.topnews;
+				if(topNews!=null){
+					titleList = new ArrayList<String>();
+					urlList = new ArrayList<String>();
+					for(TopNews news:topNews){
+						titleList.add(news.title);
+						urlList.add(news.topimage);			
+						
+					}
+					initDot(topNews.size());
+					rollViewPager=new RollViewPager(context,dotList,R.drawable.dot_focus, R.drawable.dot_normal,
+							new OnPagerClickCallback() {
+								
+								@Override
+								public void onPagerClick(int position) {
+									TopNews news = topNews.get(position);
+									if (news.type.equals("news")) {
+										Intent intent = new Intent(context,NewsDetailActivity.class);
+										String url = topNews.get(position).url;
+										String commentUrl = topNews.get(position).commenturl;
+										String newsId = topNews.get(position).id;
+										String commentListUrl = topNews
+												.get(position).commentlist;
+										String title = topNews.get(position).title;
+										String imgUrl = topNews.get(position).topimage;
+										boolean comment = topNews.get(position).comment;
+										intent.putExtra("url", url);
+										intent.putExtra("commentUrl",	commentUrl);
+										intent.putExtra("newsId", newsId);
+										intent.putExtra("imgUrl", imgUrl);
+										intent.putExtra("title", title);
+										intent.putExtra("comment", comment);
+										intent.putExtra("countCommentUrl",countCommentUrl);
+										intent.putExtra("commentListUrl",commentListUrl);
+										context.startActivity(intent);									
+										
+									}else if(news.type.equals("topic")){
+										
+									}
+								}
+							});
+					rollViewPager.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+							LayoutParams.WRAP_CONTENT));
+					rollViewPager.setUriList(urlList);
+					rollViewPager.setTitle(topNewsTitle, titleList);
+					rollViewPager.startRoll();
+					mViewPagerLay.removeAllViews();
+					mViewPagerLay.addView(rollViewPager);
+					if (ptrLv.getRefreshableView().getHeaderViewsCount() < 1) {
+						ptrLv.getRefreshableView().addHeaderView(topNewsView);
+					} 
+					
+					
+				}				
 				
 			}
+			moreUrl = newsList.data.more;
+			LogUtils.d("111111="+newsList.data.news.size());
+			if (isRefresh) {
+				news_list.clear();
+				news_list.addAll(newsList.data.news);
+			} else {
+				news_list.addAll(newsList.data.news);
+			}
 			
-			
+			for (News newsItem : news_list) {
+				if(readSet.contains(newsItem.id)){
+					newsItem.isRead= true;
+				}else{
+					newsItem.isRead = false;
+				}
+			}
+			if (adapter == null) {
+				adapter = new NewsAdapter(context, news_list, 0);
+				ptrLv.getRefreshableView().setAdapter(adapter);
+			} else {
+				adapter.notifyDataSetChanged();
+			}
+			onLoaded();
+			LogUtils.d("moreUrl---" + moreUrl);
+			if (TextUtils.isEmpty(moreUrl)) {
+				ptrLv.setHasMoreData(false);
+			} else {
+				ptrLv.setHasMoreData(true);
+			}
+//			setLastUpdateTime();
 		}
 		
 		
