@@ -45,8 +45,8 @@
     <!-- Required -->
     <uses-permission android:name="com.ymangu.mynews.permission.JPUSH_MESSAGE" />
     
-    
-    
+        
+        
 
     <application
         android:allowBackup="true"
@@ -139,6 +139,21 @@
         <meta-data
             android:name="JPUSH_APPKEY"
             android:value="903001f3954463a8a8dbd18a" />
+        
+        
+        <!--  ShareSDK授权操作-->
+        <activity
+            android:name="cn.sharesdk.framework.ShareSDKUIShell"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        
+        
+        
+        
+        
+        
 </application>
 
 </manifest>

@@ -5,12 +5,14 @@ import java.util.Set;
 
 import android.app.Application;
 import cn.jpush.android.api.JPushInterface;
+import cn.sharesdk.framework.ShareSDK;
 
 public class QLApplication extends Application {
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
 		JPushInterface.setDebugMode(true);
 		JPushInterface.init(this);
 		

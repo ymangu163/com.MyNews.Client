@@ -3,6 +3,7 @@ package com.ymangu.mynews;
 
 import cn.jpush.android.api.CustomPushNotificationBuilder;
 import cn.jpush.android.api.JPushInterface;
+import cn.sharesdk.framework.ShareSDK;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -44,6 +45,9 @@ public class MainActivity extends SlidingFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		ShareSDK.initSDK(this);
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);  // 无Title
 		
 		setBehindContentView(R.layout.menu_lay); // slidingMenu的布局
@@ -100,6 +104,8 @@ public class MainActivity extends SlidingFragmentActivity {
 		builder.statusBarDrawable = R.drawable.icon_share;      // 指定最顶层状态栏小图标
 		builder.layoutIconDrawable = R.drawable.govaffairs_press2;   // 指定下拉状态栏时显示的通知图标
 		JPushInterface.setPushNotificationBuilder(2, builder);
+		
+		
 						
 	}
 	
@@ -138,6 +144,12 @@ public class MainActivity extends SlidingFragmentActivity {
 	protected void onPause() {
 		super.onPause();
 		JPushInterface.onPause(this);
+		
+	}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ShareSDK.stopSDK(this);
 	}
 	
 }
